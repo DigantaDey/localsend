@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:localsend_isolates/model/file_type.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 part 'cross_file.mapper.dart';
@@ -10,6 +12,24 @@ part 'cross_file.mapper.dart';
 /// This model is used during the file selection phase.
 @MappableClass()
 class CrossFile with CrossFileMappable {
+  /// Builds an in-memory text message (e.g. clipboard content) that can be
+  /// sent to another device. The receiver treats a single text file like this
+  /// as a "message request".
+  factory CrossFile.textMessage(String message, {String? name}) {
+    final bytes = utf8.encode(message);
+    return CrossFile(
+      name: name ?? '${const Uuid().v4()}.txt',
+      fileType: FileType.text,
+      size: bytes.length,
+      thumbnail: null,
+      asset: null,
+      path: null,
+      bytes: bytes,
+      lastModified: null,
+      lastAccessed: null,
+    );
+  }
+
   final String name;
   final FileType fileType;
   final int size;

@@ -214,6 +214,9 @@ class Translations$receiveTab$en {
 
   /// en: 'Receive via link'
   String get link => 'Receive via link';
+
+  /// en: 'Message from {sender} copied to clipboard'
+  String clipboardCopied({required String sender}) => 'Message from ${sender} copied to clipboard';
 }
 
 // Path: sendTab
@@ -244,6 +247,12 @@ class Translations$sendTab$en {
 
   /// en: 'Manual sending'
   String get manualSending => 'Manual sending';
+
+  /// en: 'Send clipboard'
+  String get sendClipboard => 'Send clipboard';
+
+  /// en: 'Clipboard is empty'
+  String get clipboardEmpty => 'Clipboard is empty';
 
   /// en: 'Send mode'
   String get sendMode => 'Send mode';
@@ -1138,6 +1147,12 @@ class Translations$settingsTab$receive$en {
 
   /// en: 'Save to history'
   String get saveToHistory => 'Save to history';
+
+  /// en: 'Copy received messages to clipboard'
+  String get autoCopyClipboard => 'Copy received messages to clipboard';
+
+  /// en: 'Message requests are accepted automatically and their text is copied to the clipboard'
+  String get autoCopyClipboardDescription => 'Message requests are accepted automatically and their text is copied to the clipboard';
 
   /// en: 'Verify checksums when receiving files'
   String get verifyChecksums => 'Verify checksums when receiving files';

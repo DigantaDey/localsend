@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/cross_file.dart';
 import 'package:localsend_app/model/persistence/favorite_device.dart';
 import 'package:localsend_app/model/send_mode.dart';
@@ -14,6 +16,7 @@ import 'package:localsend_app/provider/network/scan_facade.dart';
 import 'package:localsend_app/provider/network/send_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/util/ui/snackbar.dart';
 import 'package:localsend_app/widget/dialogs/add_file_dialog.dart';
 import 'package:localsend_app/widget/dialogs/address_input_dialog.dart';
 import 'package:localsend_app/widget/dialogs/favorite_dialog.dart';
@@ -33,6 +36,7 @@ class SendTabVm {
   final Future<void> Function(BuildContext context, SendMode mode) onTapSendMode;
   final Future<void> Function(BuildContext context, Device device) onTapDevice;
   final Future<void> Function(BuildContext context, Device device) onTapDeviceMultiSend;
+  final Future<void> Function(BuildContext context, Device device) onTapDeviceClipboard;
 
   const SendTabVm({
     required this.sendMode,
@@ -45,6 +49,7 @@ class SendTabVm {
     required this.onTapSendMode,
     required this.onTapDevice,
     required this.onTapDeviceMultiSend,
+    required this.onTapDeviceClipboard,
   });
 }
 
@@ -163,6 +168,29 @@ final sendTabVmProvider = ViewProvider((ref) {
             target: device,
             files: files,
             background: false,
+          );
+    },
+    onTapDeviceClipboard: (context, device) async {
+      // One-tap clipboard transfer: send the current clipboard text to the
+      // device as a background message without touching the file selection.
+      // The HTTP upload path requires a reachable IP (WebRTC-only devices are not supported).
+      if (device.ip == null) {
+        return;
+      }
+
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      final text = data?.text;
+      if (text == null || text.isEmpty) {
+        if (context.mounted) {
+          context.showSnackBar(t.sendTab.clipboardEmpty);
+        }
+        return;
+      }
+
+      await ref.notifier(sendProvider).startSession(
+            target: device,
+            files: [CrossFile.textMessage(text)],
+            background: true,
           );
     },
     onTapDeviceMultiSend: (context, device) async {
