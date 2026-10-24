@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/widget/custom_progress_bar.dart';
 import 'package:localsend_app/widget/device_bage.dart';
@@ -18,6 +19,10 @@ class DeviceListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onDetailsTap;
 
+  /// If not null, a paste button is shown that sends the local clipboard
+  /// content to the device in one tap.
+  final VoidCallback? onSendClipboard;
+
   const DeviceListTile({
     required this.device,
     this.isFavorite = false,
@@ -26,6 +31,7 @@ class DeviceListTile extends StatelessWidget {
     this.progress,
     this.onTap,
     this.onDetailsTap,
+    this.onSendClipboard,
   });
 
   @override
@@ -43,10 +49,22 @@ class DeviceListTile extends StatelessWidget {
           ],
         ],
       ),
-      trailing: onDetailsTap != null
-          ? IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: onDetailsTap,
+      trailing: (onSendClipboard != null || onDetailsTap != null)
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (onSendClipboard != null)
+                  IconButton(
+                    tooltip: t.sendTab.sendClipboard,
+                    icon: const Icon(Icons.paste),
+                    onPressed: onSendClipboard,
+                  ),
+                if (onDetailsTap != null)
+                  IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: onDetailsTap,
+                  ),
+              ],
             )
           : null,
       subTitle: Wrap(

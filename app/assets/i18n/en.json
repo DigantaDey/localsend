@@ -52,7 +52,8 @@
       "favorites": "Favorites",
       "on": "@:general.on"
     },
-    "link": "Receive via link"
+    "link": "Receive via link",
+    "clipboardCopied": "Message from {sender} copied to clipboard"
   },
   "sendTab": {
     "title": "Send",
@@ -74,6 +75,8 @@
     "thisDevice": "This Device",
     "scan": "Search devices",
     "manualSending": "Manual sending",
+    "sendClipboard": "Send clipboard",
+    "clipboardEmpty": "Clipboard is empty",
     "sendMode": "Send mode",
     "sendModes": {
       "single": "Single recipient",
@@ -124,6 +127,8 @@
       "downloads": "(Downloads)",
       "saveToGallery": "Save media to gallery",
       "saveToHistory": "Save to history",
+      "autoCopyClipboard": "Copy received messages to clipboard",
+      "autoCopyClipboardDescription": "Message requests are accepted automatically and their text is copied to the clipboard",
       "verifyChecksums": "Verify checksums when receiving files"
     },
     "send": {

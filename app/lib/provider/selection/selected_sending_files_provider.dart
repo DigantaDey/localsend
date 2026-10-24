@@ -1,4 +1,4 @@
-import 'dart:convert' show jsonDecode, utf8;
+import 'dart:convert' show jsonDecode;
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -43,18 +43,7 @@ class AddMessageAction extends ReduxAction<SelectedSendingFilesNotifier, List<Cr
 
   @override
   List<CrossFile> reduce() {
-    final List<int> bytes = utf8.encode(message);
-    final file = CrossFile(
-      name: '${_uuid.v4()}.txt',
-      fileType: FileType.text,
-      size: bytes.length,
-      thumbnail: null,
-      asset: null,
-      path: null,
-      bytes: bytes,
-      lastModified: null,
-      lastAccessed: null,
-    );
+    final file = CrossFile.textMessage(message, name: '${_uuid.v4()}.txt');
 
     return List.unmodifiable(
       [

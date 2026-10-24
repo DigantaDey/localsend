@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/state/server/receive_session_state.dart';
 import 'package:localsend_app/model/state/server/receiving_file.dart';
 import 'package:localsend_app/pages/home_page.dart';
@@ -25,6 +27,7 @@ import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/util/native/directories.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
+import 'package:localsend_app/util/ui/snackbar.dart';
 import 'package:localsend_app/widget/dialogs/open_file_dialog.dart';
 import 'package:localsend_isolates/isolate.dart';
 import 'package:localsend_isolates/model/device.dart';
@@ -179,6 +182,24 @@ class ReceiveController {
               timestamp: DateTime.now().toUtc(),
             ),
           );
+    }
+
+    if (message != null && settings.autoCopyClipboard) {
+      // Clipboard sync: accept the message without user interaction and put
+      // its text straight into the system clipboard.
+      final senderAlias = server.getState().session?.senderAlias ?? event.info.alias;
+      try {
+        await Clipboard.setData(ClipboardData(text: message));
+      } catch (e) {
+        _logger.warning('Failed to copy received message to clipboard', e);
+      }
+
+      // An empty selection makes the Rust server respond with 204 without
+      // creating an upload session, exactly like accepting a message manually.
+      await acceptFileRequest({});
+
+      Routerino.context.showSnackBar(t.receiveTab.clipboardCopied(sender: senderAlias));
+      return;
     }
 
     final receiveProvider = ViewProvider((ref) {

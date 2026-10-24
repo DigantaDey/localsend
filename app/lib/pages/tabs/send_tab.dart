@@ -226,6 +226,8 @@ class SendTab extends StatelessWidget {
                           nameOverride: favoriteEntry?.alias,
                           onDetailsTap: () async => await context.push(() => DeviceDetailsPage(device: device)),
                           onTap: () async => await vm.onTapDevice(context, device),
+                          // Clipboard transfer uses the HTTP upload path, which requires a reachable IP address.
+                          onSendClipboard: device.ip != null ? () async => await vm.onTapDeviceClipboard(context, device) : null,
                         ),
                 ),
               );
@@ -556,6 +558,7 @@ class _MultiSendDeviceListTile extends StatelessWidget {
       nameOverride: nameOverride,
       onDetailsTap: () async => await context.push(() => DeviceDetailsPage(device: device)),
       onTap: () async => await vm.onTapDeviceMultiSend(context, device),
+      onSendClipboard: device.ip != null ? () async => await vm.onTapDeviceClipboard(context, device) : null,
     );
   }
 }
